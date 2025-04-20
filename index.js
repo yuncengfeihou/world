@@ -3,7 +3,7 @@ import { saveSettingsDebounced } from "../../../../script.js"; // 用于保存�
 import { POPUP_TYPE, callGenericPopup } from '../../../popup.js'; // 用于显示弹窗
 import { getSortedEntries } from '../world-info.js'; // 导入核心函数
 
-const extensionName = "world-info-viewer"; // 必须与插件文件夹名称一致
+const extensionName = "world"; // 必须与插件文件夹名称一致
 const extensionFolderPath = `scripts/extensions/third-party/${extensionName}`;
 // const extensionSettings = extension_settings[extensionName]; // 如果需要设置，取消注释
 // const defaultSettings = {}; // 如果需要设置，定义默认值
