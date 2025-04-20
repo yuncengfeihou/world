@@ -1,6 +1,6 @@
 {
     "display_name": "World Info 查看器1.0",
-    "loading_order": 10,
+    "loading_order": 8,
     "requires": [],
     "optional": [],
     "js": "index.js",
