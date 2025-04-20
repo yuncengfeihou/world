@@ -1,34 +1,33 @@
-import { extension_settings } from "../../../extensions.js"; // 用于插件设置（虽然此插件未使用）
-import { saveSettingsDebounced } from "../../../../script.js"; // 用于保存设置（虽然此插件未使用）
-import { POPUP_TYPE, callGenericPopup } from '../../../popup.js'; // 用于显示弹窗
+import { extension_settings } from "../../../extensions.js";
+import { saveSettingsDebounced } from "../../../../script.js";
+import { POPUP_TYPE, callGenericPopup } from '../../../popup.js';
 import { getSortedEntries } from '../../../world-info.js'; // 导入核心函数
 
-const extensionName = "world"; // 必须与插件文件夹名称一致
+// --- 调试日志 1 ---
+console.log("World Info Viewer: index.js 开始加载");
+
+const extensionName = "world";
 const extensionFolderPath = `scripts/extensions/third-party/${extensionName}`;
-// const extensionSettings = extension_settings[extensionName]; // 如果需要设置，取消注释
-// const defaultSettings = {}; // 如果需要设置，定义默认值
 
-// 加载设置的函数（此插件简单，暂不需要复杂设置逻辑）
-// async function loadSettings() {
-//     extension_settings[extensionName] = extension_settings[extensionName] || {};
-//     if (Object.keys(extension_settings[extensionName]).length === 0) {
-//         Object.assign(extension_settings[extensionName], defaultSettings);
-//     }
-// }
+// --- 调试日志 2 ---
+// 检查导入的函数是否有效
+console.log("World Info Viewer: getSortedEntries function type:", typeof getSortedEntries);
+console.log("World Info Viewer: callGenericPopup function type:", typeof callGenericPopup);
 
-// 按钮点击事件处理函数
 async function onFetchWorldInfoClick() {
+    // --- 调试日志 5 ---
+    console.log("World Info Viewer: onFetchWorldInfoClick 函数被调用");
     try {
-        // 调用 world-info.js 的函数获取所有条目
+        console.log("World Info Viewer: 正在调用 getSortedEntries...");
         const entries = await getSortedEntries();
+        console.log("World Info Viewer: getSortedEntries 调用完成, 结果:", entries);
 
         if (!entries || entries.length === 0) {
             toastr.info("当前没有找到任何 World Info 条目。请检查全局、角色、聊天或 Persona 设置。", "无 World Info 条目");
             return;
         }
 
-        // 格式化条目以便在弹窗中显示
-        let formattedHtml = `<div style="max-height: 70vh; overflow-y: auto;">`; // 添加滚动条
+        let formattedHtml = `<div style="max-height: 70vh; overflow-y: auto;">`;
         formattedHtml += `<h3>共找到 ${entries.length} 个 World Info 条目</h3><hr>`;
 
         entries.forEach(entry => {
@@ -49,24 +48,27 @@ async function onFetchWorldInfoClick() {
 
         formattedHtml += `</div>`;
 
-        // 显示弹窗
+        console.log("World Info Viewer: 准备显示弹窗");
         await callGenericPopup(formattedHtml, POPUP_TYPE.TEXT, null, {
-            large: true, // 使用大弹窗
-            allowVerticalScrolling: false, // 内部 div 已经处理滚动
+            large: true,
+            allowVerticalScrolling: false,
             title: "当前 World Info 条目"
         });
+        console.log("World Info Viewer: 弹窗已显示");
 
         toastr.success(`成功获取并显示了 ${entries.length} 个 World Info 条目。`);
 
     } catch (error) {
-        console.error("获取 World Info 时出错:", error);
+        // --- 调试日志 6 ---
+        console.error("World Info Viewer: 获取或显示 World Info 时出错:", error);
         toastr.error("获取 World Info 时发生错误，请查看控制台获取详细信息。", "错误");
     }
 }
 
-// 插件初始化入口
 jQuery(async () => {
-    // 创建设置界面的 HTML
+    // --- 调试日志 3 ---
+    console.log("World Info Viewer: DOM ready, 开始初始化插件UI");
+
     const settingsHtml = `
         <div class="world-info-viewer-settings">
             <div class="inline-drawer">
@@ -84,12 +86,23 @@ jQuery(async () => {
             </div>
         </div>`;
 
-    // 将 HTML 添加到扩展设置页面
-    $("#extensions_settings").append(settingsHtml);
+    try {
+        $("#extensions_settings").append(settingsHtml);
+        console.log("World Info Viewer: HTML 已添加到页面");
 
-    // 为按钮绑定点击事件
-    $("#fetch-world-info-button").on("click", onFetchWorldInfoClick);
+        // --- 调试日志 4 ---
+        const buttonElement = $("#fetch-world-info-button");
+        console.log("World Info Viewer: 查找按钮元素:", buttonElement);
+        if (buttonElement.length > 0) {
+            console.log("World Info Viewer: 按钮元素已找到, 正在绑定点击事件...");
+            buttonElement.on("click", onFetchWorldInfoClick);
+            console.log("World Info Viewer: 点击事件已绑定");
+        } else {
+            console.error("World Info Viewer: 未能找到 ID 为 fetch-world-info-button 的按钮元素!");
+        }
+    } catch (error) {
+        console.error("World Info Viewer: 初始化UI或绑定事件时出错:", error);
+    }
 
-    // 加载设置（如果需要）
-    // await loadSettings();
+    console.log("World Info Viewer: 插件初始化完成");
 });
