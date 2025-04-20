@@ -1,0 +1,7 @@
+.world-info-viewer-block .menu_button {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+/* 弹窗内 pre 标签的样式已在 JS 中内联设置，这里可以不加 */
+/* 如果需要更复杂的弹窗样式，可以在这里添加 */
